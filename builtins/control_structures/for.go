@@ -13,11 +13,11 @@ import (
 type ForControlStructure struct {
 	key             string
 	value           string // only for maps: for key, value in map
-	objectEvaluator nodes.Expression
+	ObjectEvaluator nodes.Expression
 	ifCondition     nodes.Expression
 
 	bodyWrapper  *nodes.Wrapper
-	emptyWrapper *nodes.Wrapper
+	EmptyWrapper *nodes.Wrapper
 }
 
 func (controlStructure *ForControlStructure) Position() *tokens.Token {
@@ -54,7 +54,7 @@ func (li *LoopInfos) Changed(value *exec.Value) bool {
 }
 
 func (node *ForControlStructure) Execute(r *exec.Renderer, tag *nodes.ControlStructureBlock) (forError error) {
-	obj := r.Eval(node.objectEvaluator)
+	obj := r.Eval(node.ObjectEvaluator)
 	if obj.IsError() {
 		return obj
 	}
@@ -106,8 +106,8 @@ func (node *ForControlStructure) Execute(r *exec.Renderer, tag *nodes.ControlStr
 		first:  true,
 		index0: -1,
 	}
-	if len(items.Pairs) == 0 && node.emptyWrapper != nil {
-		if err := r.Inherit().ExecuteWrapper(node.emptyWrapper); err != nil {
+	if len(items.Pairs) == 0 && node.EmptyWrapper != nil {
+		if err := r.Inherit().ExecuteWrapper(node.EmptyWrapper); err != nil {
 			return err
 		}
 	}
@@ -190,7 +190,7 @@ func forParser(p *parser.Parser, args *parser.Parser) (nodes.ControlStructure, e
 	if err != nil {
 		return nil, err
 	}
-	controlStructure.objectEvaluator = objectEvaluator
+	controlStructure.ObjectEvaluator = objectEvaluator
 	controlStructure.key = keyToken.Val
 	if valueToken != nil {
 		controlStructure.value = valueToken.Val
@@ -225,7 +225,7 @@ func forParser(p *parser.Parser, args *parser.Parser) (nodes.ControlStructure, e
 		if err != nil {
 			return nil, err
 		}
-		controlStructure.emptyWrapper = wrapper
+		controlStructure.EmptyWrapper = wrapper
 
 		if !endargs.End() {
 			return nil, endargs.Error("Arguments not allowed here.", nil)
